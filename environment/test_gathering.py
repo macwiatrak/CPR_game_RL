@@ -11,6 +11,7 @@ env.reset()
 
 temp = env.render_env()
 i = 0
+
 while True:
     temp = env.render_env()
     plt.imshow(temp)

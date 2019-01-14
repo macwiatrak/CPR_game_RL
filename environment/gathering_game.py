@@ -152,7 +152,7 @@ class GameEnv:
         # 4: trun lelf, 5:turn right, 6: beam, 7: stay
         self.action_num = 8
 
-        self.reset()
+        #self.reset()
 
     def reset(self):
         self.agent1 = AgentObj(coordinates=(0, 5), type=2, name='agent1')
