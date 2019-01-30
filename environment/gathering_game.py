@@ -119,7 +119,7 @@ class AgentObj:
 
 
 class FoodObj:
-    def __init__(self, coordinates, type=1, hidden=0, reward=1):
+    def __init__(self, coordinates, type=1, hidden=20, reward=1):
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.type = type
@@ -141,7 +141,7 @@ class FoodObj:
 
 
 class GameEnv:
-    def __init__(self, widht=40, hight=20, agent_hidden=0, food_hidden=0):
+    def __init__(self, widht=40, hight=20, agent_hidden=10, food_hidden=10):
         self.size_x = widht
         self.size_y = hight
         self.objects = []
@@ -155,6 +155,7 @@ class GameEnv:
         #self.reset()
 
     def reset(self):
+
         self.agent1 = AgentObj(coordinates=(0, 5), type=2, name='agent1')
         self.agent2 = AgentObj(coordinates=(30, 5), type=0, name='agent2', direction=2)
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left, self.agent1.move_right,
