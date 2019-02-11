@@ -141,9 +141,9 @@ class FoodObj:
 
 
 class GameEnv:
-    def __init__(self, widht=40, hight=20, agent_hidden=10, food_hidden=10):
-        self.size_x = widht
-        self.size_y = hight
+    def __init__(self, width=40, height=20, agent_hidden=10, food_hidden=10):
+        self.size_x = width
+        self.size_y = height
         self.objects = []
         self.agent_hidden = agent_hidden
         self.food_hidden = food_hidden
@@ -152,7 +152,7 @@ class GameEnv:
         # 4: trun lelf, 5:turn right, 6: beam, 7: stay
         self.action_num = 8
 
-        #self.reset()
+        self.reset()
 
     def reset(self):
 
@@ -167,8 +167,8 @@ class GameEnv:
 
         self.food_objects = []
 
-        def appendfood(widht, hight, nr_of_points):
-            return [divmod(i, hight) for i in random.sample(range(widht * hight), nr_of_points)]
+        def appendfood(width, height, nr_of_points):
+            return [divmod(i, height) for i in random.sample(range(width * height), nr_of_points)]
 
         for x in appendfood(40, 20, 300):
             self.food_objects.append(FoodObj(x))
