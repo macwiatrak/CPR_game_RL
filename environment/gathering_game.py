@@ -141,9 +141,9 @@ class FoodObj:
 
 
 class GameEnv:
-    def __init__(self, widht=40, hight=20, agent_hidden=5, food_hidden=10):
-        self.size_x = widht
-        self.size_y = hight
+    def __init__(self, width=40, height=20, agent_hidden=5, food_hidden=10):
+        self.size_x = width
+        self.size_y = height
         self.objects = []
         self.agent_hidden = agent_hidden
         self.food_hidden = food_hidden
@@ -155,8 +155,8 @@ class GameEnv:
         self.reset()
 
     def reset(self):
-        self.agent1 = AgentObj(coordinates=(0, 5), type=2, name='agent1')
-        self.agent2 = AgentObj(coordinates=(30, 5), type=0, name='agent2', direction=2)
+        self.agent1 = AgentObj(coordinates=(0, 1), type=2, name='agent1')
+        self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=2)
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left, self.agent1.move_right,
                                self.agent1.turn_left, self.agent1.turn_right, self.agent1.beam, self.agent1.stay]
         self.agent2_actions = [self.agent2.move_forward, self.agent2.move_backward, self.agent2.move_left, self.agent2.move_right,
@@ -166,8 +166,8 @@ class GameEnv:
 
         self.food_objects = []
 
-        def appendfood(widht, hight, nr_of_points):
-            return [divmod(i, hight) for i in random.sample(range(widht * hight), nr_of_points)]
+        def appendfood(width, height, nr_of_points):
+            return [divmod(i, height) for i in random.sample(range(width * height), nr_of_points)]
 
         for x in appendfood(40, 20, 250):
             self.food_objects.append(FoodObj(x))
