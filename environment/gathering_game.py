@@ -124,6 +124,7 @@ class FoodObj:
         self.y = coordinates[1]
         self.type = type
         self.hidden = hidden
+        #self.is_collected=False
         self.reward = reward
 
     def is_hidden(self):
@@ -131,9 +132,26 @@ class FoodObj:
 
     def eat(self, food_hidden):
         self.hidden = food_hidden
+        #self.is_collected = True
         return self.reward
 
+    '''def get_collected(self, time):
+        """Called when the apple is collected by a player"""
+        self.is_collected = True
+        self.collected_time = time
+        return self.reward'''
+
+    '''def respawn(self):
+            1. calculate the number of apples in the radius of 2 - foodNumber
+            2. rand = random.random(0,100) # initialize random variable
+            3. if foodNumber <=2 and
+            self.is_collected = False
+            self.collected_time = 0'''
+
     def sub_hidden(self):
+        # 1. calculate the number of apples in the radius of 2 - foodNumber
+        # 2. rand = random.random(0,100) # initialize random variable
+        # 3. if foodNumber <=2 and
         self.hidden -= 1
         self.hidden = 0 if self.hidden <= 0 else self.hidden
         return self.hidden
@@ -141,7 +159,7 @@ class FoodObj:
 
 
 class GameEnv:
-    def __init__(self, width=40, height=20, agent_hidden=5, food_hidden=10):
+    def __init__(self, width=40, height=20, agent_hidden=5, food_hidden=20):
         self.size_x = width
         self.size_y = height
         self.objects = []
@@ -149,7 +167,7 @@ class GameEnv:
         self.food_hidden = food_hidden
 
         # 0: forward, 1: backward, 2: left, 3: right
-        # 4: trun lelf, 5:turn right, 6: beam, 7: stay
+        # 4: turn lelf, 5:turn right, 6: beam, 7: stay
         self.action_num = 8
 
         self.reset()
@@ -166,11 +184,11 @@ class GameEnv:
 
         self.food_objects = []
 
-        foodList = [(0,4),(0,15),(1,3),(1,4),(1,5),(1,3),(1,11),(1,18),(2,4),(2,6),(2,8),(2,10),(2,11),(2,12),
-                    (3,5),(3,6),(3,7),(3,8),(3,9),(3,11),(3,13),(3,15),(3,6),(4,3),(4,6),(4,8),(4,12),(4,13),
-                    (4, 14),(4,15),(4,16),(5,2),(5,3),(5,4),(5,10),(5,13),(5,15),(5,17),(6,3),(6,5),(6,9),(6,10),
-                    (6,11),(6,3),(6,16),(6,17),(6,18),(7,2),(7,4),(7,5),(7,6),(7,10),(7,12),(7,17),(8,1),(8,2),
-                    (8,3),(8,5),(8,1),(8,9),(8,11),(8,12),(8,13),(8,15),(9,2),(9,8),(9,9),(9,10),(9,12),(10,16),
+        foodList = [(0,4),(0,15),(1,3),(1,4),(1,5),(1,11),(1,18),(2,4),(2,6),(2,8),(2,10),(2,11),(2,12),
+                    (3,5),(3,6),(3,7),(3,8),(3,9),(3,11),(3,13),(3,15),(4,3),(4,6),(4,8),(4,12),(4,13),
+                    (4,14),(4,15),(4,16),(5,2),(5,3),(5,4),(5,10),(5,13),(5,15),(5,17),(6,3),(6,5),(6,9),(6,10),
+                    (6,11),(6,16),(6,17),(6,18),(7,2),(7,4),(7,5),(7,6),(7,10),(7,12),(7,17),(8,1),(8,2),
+                    (8,3),(8,5),(8,9),(8,11),(8,12),(8,13),(8,15),(9,2),(9,8),(9,9),(9,10),(9,12),(10,16),
                     (10, 9),(11,5),(11,15),(11,16),(11,17),(12,0),(12,1),(12,2),(12,4),(12,5),(12,6),(12,18),(12,16),
                     (12,14),(13,1),(13,2),(13,3),(13,5),(13,7),(13,11),(13,19),(13,18),(13,17),(14,2),(14,6),
                     (14,7),(14,8),(14,10),(14,11),(14,12),(14,15),(14,18),(15,4),(15,7),(15,9),(15,11),(15,13),
