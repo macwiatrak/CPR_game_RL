@@ -134,27 +134,6 @@ class FoodObj:
     def respawn(self):
         self.is_collected = False
 
-    '''def get_collected(self, time):
-        """Called when the apple is collected by a player"""
-        self.is_collected = True
-        self.collected_time = time
-        return self.reward'''
-
-    '''def respawn(self):
-            1. calculate the number of apples in the radius of 2 - foodNumber
-            2. rand = random.random(0,100) # initialize random variable
-            3. if foodNumber <=2 and
-            self.is_collected = False
-            self.collected_time = 0'''
-
-    '''def sub_hidden(self):
-        # 1. calculate the number of apples in the radius of 2 - foodNumber
-        # 2. rand = random.random(0,100) # initialize random variable
-        # 3. if foodNumber <=2 and
-        self.hidden -= 1
-        self.hidden = 0 if self.hidden <= 0 else self.hidden
-        return self.hidden'''
-
 
 class GameEnv:
     def __init__(self, width=40, height=20, agent_hidden=5):
