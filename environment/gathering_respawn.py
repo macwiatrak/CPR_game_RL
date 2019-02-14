@@ -120,12 +120,8 @@ class FoodObj:
         self.x = coordinates[0]
         self.y = coordinates[1]
         self.type = type
-        # self.hidden = hidden
         self.is_collected = False
         self.reward = reward
-
-    # def is_hidden(self):
-    #   return self.hidden > 0
 
     def eat(self):
         self.is_collected = True
