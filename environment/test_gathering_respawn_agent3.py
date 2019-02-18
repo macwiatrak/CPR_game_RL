@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from gathering_respawn import *
+from gathering_respawn_agent3 import *
 
 for i in range(3):
     env = GameEnv()

@@ -2,9 +2,8 @@
 # encoding=utf-8
 
 import matplotlib.pyplot as plt
-import numpy as np
 
-from gathering_game import *
+from environment_old.gathering_game import *
 
 for i in range(3):
     env = GameEnv()
