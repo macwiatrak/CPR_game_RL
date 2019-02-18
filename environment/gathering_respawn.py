@@ -185,7 +185,7 @@ class FoodObj:
 
 
 class GameEnv:
-    def __init__(self, width=40, height=20, agent_hidden=25):
+    def __init__(self, width=40, height=20, agent_hidden=5):
         self.size_x = width
         self.size_y = height
         self.objects = []
