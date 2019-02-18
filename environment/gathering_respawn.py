@@ -103,13 +103,66 @@ class AgentObj:
 
     def beam(self, env_x_size, env_y_size):
         if self.direction == 0:
-            beam_set = [(i + 1, self.y) for i in range(self.x, 20)]
+            if (env_x_size-20-self.x) > 0:
+                if (self.y-2) < 0:
+                    beam_set = [(i + 1, self.y + j) for i in range(self.x, self.x + 20) for j in
+                                range(-self.y, 3)]
+                elif (self.y+2) > (env_y_size-1):
+                    beam_set = [(i + 1, self.y + j) for i in range(self.x, self.x + 20) for j in
+                                range(-2, env_y_size - self.y)]
+                else:
+                    beam_set = [(i + 1, self.y+j) for i in range(self.x, self.x + 20) for j in range(-2, 3)]
+            else:
+                if (self.y-2) < 0:
+                    beam_set = [(i + 1, self.y + j) for i in range(self.x, env_x_size-1) for j in
+                                range(-self.y, 3)]
+                elif (self.y+2) > (env_y_size-1):
+                    beam_set = [(i + 1, self.y + j) for i in range(self.x, env_x_size - 1) for j in
+                                range(-2, env_y_size - self.y)]
+                else:
+                    beam_set = [(i + 1, self.y + j) for i in range(self.x, env_x_size-1) for j in
+                                range(-2, 3)]
         elif self.direction == 1:
-            beam_set = [(self.x, i - 1) for i in range(self.y, 20)]
+            if (self.x-2) < 0:
+                beam_set = [(self.x+j, i - 1) for i in range(self.y, 0, -1) for j in
+                                range(-self.x, 3)]
+            elif (self.x+2) > (env_x_size-1):
+                beam_set = [(self.x + j, i - 1) for i in range(self.y, 0, -1) for j in
+                                range(-2, env_x_size - self.x)]
+            else:
+                beam_set = [(self.x + j, i - 1) for i in range(self.y, 0, -1) for j in
+                                range(-2, 3)]
         elif self.direction == 2:
-            beam_set = [(i - 1, self.y) for i in range(self.x, 20)]
+            if (self.x-20) < 0:
+                if (self.y-2) < 0:
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-self.y, 3)]
+                elif (self.y+2) > (env_y_size-1):
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-2, env_y_size - self.y)]
+                else:
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-2, 3)]
+            else:
+                if (self.y-2) < 0:
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-self.y, 3)]
+                elif (self.y+2) > (env_y_size-1):
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-2, env_y_size - self.y)]
+                else:
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-2, 3)]
         elif self.direction == 3:
-            beam_set = [(self.x, i + 1) for i in range(self.y, 20)]
+            if (self.x - 2) < 0:
+                beam_set = [(self.x + j, i + 1) for i in range(self.y, env_y_size - 1) for j in
+                                range(-self.x, 3)]
+            elif (self.x+2) > (env_x_size-1):
+                beam_set = [(self.x + j, i + 1) for i in range(self.y, env_y_size - 1) for j in
+                                range(-2, env_x_size - self.x)]
+            else:
+                beam_set = [(self.x + j, i + 1) for i in range(self.y, env_y_size-1) for j in
+                                range(-2, 3)]
         else:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
@@ -314,7 +367,7 @@ class GameEnv:
 
         return agent1_reward, agent2_reward
 
-    def contribute_metrix(self):
+    def contribute_matrix(self):
         a = np.ones([self.size_y + 2, self.size_x + 2, 3])
         a[1:-1, 1:-1, :] = 0
 
@@ -347,7 +400,7 @@ class GameEnv:
         return a
 
     def render_env(self):
-        a = self.contribute_metrix()
+        a = self.contribute_matrix()
 
         b = scipy.misc.imresize(a[:, :, 0], [5 * self.size_y, 5 * self.size_x, 1], interp='nearest')
         c = scipy.misc.imresize(a[:, :, 1], [5 * self.size_y, 5 * self.size_x, 1], interp='nearest')
@@ -357,7 +410,7 @@ class GameEnv:
         return a
 
     def train_render(self):
-        a = self.contribute_metrix()
+        a = self.contribute_matrix()
 
         b = scipy.misc.imresize(a[:, :, 0], [84, 84, 1], interp='nearest')
         c = scipy.misc.imresize(a[:, :, 1], [84, 84, 1], interp='nearest')
