@@ -20,7 +20,7 @@ for i in range(3):
         temp = env.render_env()
         plt.imshow(temp)
         plt.show(block=False)
-        plt.pause(0.02)
+        plt.pause(0.01)
         plt.clf()
         action1 = np.random.randint(8)
         action2 = np.random.randint(8)

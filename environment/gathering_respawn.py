@@ -145,13 +145,13 @@ class AgentObj:
                                 range(-2, 3)]
             else:
                 if (self.y-2) < 0:
-                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x) for j in
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
                                 range(-self.y, 3)]
                 elif (self.y+2) > (env_y_size-1):
-                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x) for j in
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
                                 range(-2, env_y_size - self.y)]
                 else:
-                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x) for j in
+                    beam_set = [(i - 1, self.y + j) for i in range(self.x - 20, self.x+1) for j in
                                 range(-2, 3)]
         elif self.direction == 3:
             if (self.x - 2) < 0:
