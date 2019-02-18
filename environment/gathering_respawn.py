@@ -167,19 +167,6 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
 
-    '''def beam(self, env_x_size, env_y_size):
-        if self.direction == 0:
-            beam_set = [(i+1, self.y+j) for i in range(self.x, 20) for j in range(-2, 3)]
-        elif self.direction == 1:
-            beam_set = [(self.x+j, i-1) for i in range(self.y, 0, -1) for j in range(-2,3)]
-        elif self.direction == 2:
-            beam_set = [(i - 1, self.y+j) for i in range(self.x, 0, 20) for j in range(-2,3)]
-        elif self.direction == 3:
-            beam_set = [(self.x+j, i + 1) for i in range(self.y, env_y_size-1) for j in range(-2,3)]
-        else:
-            assert self.direction in range(4), 'wrong direction'
-        return beam_set
-        '''
 
 class FoodObj:
     def __init__(self, coordinates, type=1, reward=1):
