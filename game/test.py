@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-# encoding=utf-8
-
 import matplotlib.pyplot as plt
 
-from gathering_respawn_agent3 import *
+from environment import *
 
 for i in range(3):
     env = GameEnv()

@@ -201,7 +201,7 @@ class GameEnv:
     def reset(self):
         self.agent1 = AgentObj(coordinates=(0, 1), type=2, name='agent1')
         self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
-        self.agent3 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=2)
+        self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent2', direction=2)
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left,
                                self.agent1.move_right,
                                self.agent1.turn_left, self.agent1.turn_right, self.agent1.beam, self.agent1.stay]
@@ -459,3 +459,10 @@ class GameEnv:
 
         a = np.stack([b, c, d], axis=2)
         return a
+    '''
+    def step(self, action1, action2, action3):
+        r1, r2, r3 = self.move(action1, action2, action3)
+        done = ###
+        state = self.render_env()
+        
+        return state, r1, r2, r3, done'''
