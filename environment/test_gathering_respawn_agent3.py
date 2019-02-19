@@ -2,7 +2,6 @@
 # encoding=utf-8
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from gathering_respawn_agent3 import *
 
@@ -19,10 +18,10 @@ for i in range(3):
     #while True:
     for i in range(1000):
         temp = env.render_env()
-        #plt.imshow(temp)
-        #plt.show(block=False)
-        #plt.pause(0.01)
-        #plt.clf()
+        plt.imshow(temp)
+        plt.show(block=False)
+        plt.pause(0.01)
+        plt.clf()
         action1 = np.random.randint(8)
         action2 = np.random.randint(8)
         action3 = np.random.randint(8)
