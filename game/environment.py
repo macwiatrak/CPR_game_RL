@@ -43,7 +43,7 @@ class GameEnv:
         for x in foodList:
             self.food_objects.append(FoodObj(x))
 
-    def move(self, agent1_action, agent2_action, agent3_action):
+    def step(self, agent1_action, agent2_action, agent3_action):
         assert agent1_action in range(8), 'agent1 take wrong action'
         assert agent2_action in range(8), 'agent2 take wrong action'
         assert agent3_action in range(8), 'agent1 take wrong action'
@@ -141,6 +141,9 @@ class GameEnv:
             self.agent2.add_mark(self.agent_hidden)
         if (self.agent3.x, self.agent3.y) in (self.agent1_beam_set or self.agent2_beam_set):
             self.agent3.add_mark(self.agent_hidden)
+
+        #def get_observation(self):
+
 
         return agent1_reward, agent2_reward, agent3_reward
 

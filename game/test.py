@@ -17,13 +17,13 @@ for i in range(3):
         temp = env.render_env()
         plt.imshow(temp)
         plt.show(block=False)
-        plt.pause(0.01)
+        plt.pause(0.1)
         plt.clf()
         action1 = np.random.randint(8)
         action2 = np.random.randint(8)
         action3 = np.random.randint(8)
 
-        r1, r2, r3 = env.move(action1, action2, action3)
+        r1, r2, r3 = env.step(action1, action2, action3)
         i += 1
         agent1_reward += r1
         agent2_reward += r2
