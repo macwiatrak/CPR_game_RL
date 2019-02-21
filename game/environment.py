@@ -38,6 +38,11 @@ class GameEnv:
         self.agent2_beam_set = []
         self.agent3_beam_set = []
 
+        self.agent1.get_observation(env_x_size=40, env_y_size=20)
+        self.agent2.get_observation(env_x_size=40, env_y_size=20)
+        self.agent3.get_observation(env_x_size=40, env_y_size=20)
+
+
         self.food_objects = []
 
         for x in foodList:
@@ -142,10 +147,14 @@ class GameEnv:
         if (self.agent3.x, self.agent3.y) in (self.agent1_beam_set or self.agent2_beam_set):
             self.agent3.add_mark(self.agent_hidden)
 
-        #def get_observation(self):
+        agent1_obs = self.agent1.get_observation(env_x_size=40, env_y_size=20)
+        agent2_obs = self.agent2.get_observation(env_x_size=40, env_y_size=20)
+        agent3_obs = self.agent3.get_observation(env_x_size=40, env_y_size=20)
 
 
-        return agent1_reward, agent2_reward, agent3_reward
+
+
+        return agent1_reward, agent2_reward, agent3_reward, agent1_obs, agent2_obs, agent3_obs
 
     def contribute_matrix(self):
         a = np.ones([self.size_y + 2, self.size_x + 2, 3])

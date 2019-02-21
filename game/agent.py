@@ -162,3 +162,69 @@ class AgentObj:
         else:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
+
+    def get_observation(self, env_x_size, env_y_size):
+        if self.direction == 0:
+            if (env_x_size-20-self.x) > 0:
+                if (self.y-10) < 0:
+                    obs = [(i, self.y + j) for i in range(self.x, self.x + 20) for j in
+                                range(-self.y, 11)]
+                elif (self.y+10) > (env_y_size-1):
+                    obs = [(i, self.y + j) for i in range(self.x, self.x + 20) for j in
+                                range(-10, env_y_size - self.y)]
+                else:
+                    obs = [(i, self.y+j) for i in range(self.x, self.x + 20) for j in range(-10, 11)]
+            else:
+                if (self.y-10) < 0:
+                    obs = [(i, self.y + j) for i in range(self.x, env_x_size-1) for j in
+                                range(-self.y, 11)]
+                elif (self.y+10) > (env_y_size-1):
+                    obs = [(i, self.y + j) for i in range(self.x, env_x_size - 1) for j in
+                                range(-10, env_y_size - self.y)]
+                else:
+                    obs = [(i, self.y + j) for i in range(self.x, env_x_size-1) for j in
+                                range(-10, 11)]
+        elif self.direction == 1:
+            if (self.x-10) < 0:
+                obs = [(self.x+j, i) for i in range(self.y, 0, -1) for j in
+                                range(-self.x, 11)]
+            elif (self.x+10) > (env_x_size-1):
+                obs = [(self.x + j, i) for i in range(self.y, 0, -1) for j in
+                                range(-10, env_x_size - self.x)]
+            else:
+                obs = [(self.x + j, i) for i in range(self.y, 0, -1) for j in
+                                range(-10, 11)]
+        elif self.direction == 2:
+            if (self.x-20) < 0:
+                if (self.y-10) < 0:
+                    obs = [(i, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-self.y, 11)]
+                elif (self.y+10) > (env_y_size-1):
+                    obs = [(i, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-10, env_y_size - self.y)]
+                else:
+                    obs = [(i, self.y + j) for i in range(self.x, 0, -1) for j in
+                                range(-10, 11)]
+            else:
+                if (self.y-10) < 0:
+                    obs = [(i, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-self.y, 11)]
+                elif (self.y+10) > (env_y_size-1):
+                    obs = [(i, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-10, env_y_size - self.y)]
+                else:
+                    obs = [(i, self.y + j) for i in range(self.x - 20, self.x+1) for j in
+                                range(-10, 11)]
+        elif self.direction == 3:
+            if (self.x - 10) < 0:
+                obs = [(self.x + j, i) for i in range(self.y, env_y_size - 1) for j in
+                                range(-self.x, 11)]
+            elif (self.x+10) > (env_x_size-1):
+                obs = [(self.x + j, i) for i in range(self.y, env_y_size - 1) for j in
+                                range(-10, env_x_size - self.x)]
+            else:
+                obs = [(self.x + j, i) for i in range(self.y, env_y_size-1) for j in
+                                range(-10, 11)]
+        else:
+            assert self.direction in range(4), 'wrong direction'
+        return obs
