@@ -22,7 +22,7 @@ class GameEnv:
         self.reset()
 
     def reset(self):
-        self.agent1 = AgentObj(coordinates=(0, 1), type=2, name='agent1')
+        self.agent1 = AgentObj(coordinates=(0, 1), type=0, name='agent1')
         self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
         self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent2', direction=2)
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left,
@@ -113,6 +113,10 @@ class GameEnv:
         agent3_reward = 0
 
         food_not_coll = foodList_1.copy()
+
+        #if not food_not_coll:
+            #terminal = True
+            #return terminal
 
         for food in self.food_objects:
             if food.is_collected:
