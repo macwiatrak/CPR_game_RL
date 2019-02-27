@@ -50,6 +50,8 @@ class GameEnv:
 
     def step(self, action_n):
 
+        done = False
+
         assert action_n[0] in range(8), 'agent1 take wrong action'
         assert action_n[1] in range(8), 'agent2 take wrong action'
         assert action_n[2] in range(8), 'agent1 take wrong action'
@@ -115,13 +117,14 @@ class GameEnv:
 
         food_not_coll = foodList_1.copy()
 
-        #if not food_not_coll:
-            #terminal = True
-            #return terminal
 
         for food in self.food_objects:
             if food.is_collected:
                 food_not_coll.remove((food.x, food.y))
+
+        if not food_not_coll:
+            done = True
+            return done
 
         for food in self.food_objects:
             if food.is_collected:
@@ -159,24 +162,24 @@ class GameEnv:
         rew_n = [agent1_reward, agent2_reward, agent3_reward]
         obs_n = [agent1_obs, agent2_obs, agent3_obs]
 
-        return rew_n, obs_n
+        return rew_n, obs_n, done
 
     def contribute_matrix(self):
         a = np.ones([self.size_y + 2, self.size_x + 2, 3])
         a[1:-1, 1:-1, :] = 0
 
         for x, y in self.agent1_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
         for x, y in self.agent2_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
         for x, y in self.agent3_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
 
         for food in self.food_objects:
             if not food.is_collected:
