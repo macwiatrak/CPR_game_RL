@@ -48,10 +48,13 @@ class GameEnv:
         for x in foodList:
             self.food_objects.append(FoodObj(x))
 
-    def step(self, agent1_action, agent2_action, agent3_action):
-        assert agent1_action in range(8), 'agent1 take wrong action'
-        assert agent2_action in range(8), 'agent2 take wrong action'
-        assert agent3_action in range(8), 'agent1 take wrong action'
+    def step(self, action_n):
+
+        done = False
+
+        assert action_n[0] in range(8), 'agent1 take wrong action'
+        assert action_n[1] in range(8), 'agent2 take wrong action'
+        assert action_n[2] in range(8), 'agent1 take wrong action'
 
         agent1_old_x, agent1_old_y = self.agent1.x, self.agent1.y
         agent2_old_x, agent2_old_y = self.agent2.x, self.agent2.y
@@ -66,14 +69,14 @@ class GameEnv:
         self.agent3_beam_set = []
 
         if not self.agent1.is_hidden():
-            agent1_action_return = self.agent1_actions[agent1_action](env_x_size=self.size_x, env_y_size=self.size_y)
-            self.agent1_beam_set = [] if agent1_action != 6 else agent1_action_return
+            agent1_action_return = self.agent1_actions[action_n[0]](env_x_size=self.size_x, env_y_size=self.size_y)
+            self.agent1_beam_set = [] if action_n[0] != 6 else agent1_action_return
         if not self.agent2.is_hidden():
-            agent2_action_return = self.agent2_actions[agent2_action](env_x_size=self.size_x, env_y_size=self.size_y)
-            self.agent2_beam_set = [] if agent2_action != 6 else agent2_action_return
+            agent2_action_return = self.agent2_actions[action_n[1]](env_x_size=self.size_x, env_y_size=self.size_y)
+            self.agent2_beam_set = [] if action_n[1] != 6 else agent2_action_return
         if not self.agent3.is_hidden():
-            agent3_action_return = self.agent3_actions[agent3_action](env_x_size=self.size_x, env_y_size=self.size_y)
-            self.agent3_beam_set = [] if agent3_action != 6 else agent3_action_return
+            agent3_action_return = self.agent3_actions[action_n[2]](env_x_size=self.size_x, env_y_size=self.size_y)
+            self.agent3_beam_set = [] if action_n[2] != 6 else agent3_action_return
 
         if not self.agent1.is_hidden() and not self.agent2.is_hidden() and \
                 ((self.agent1.x == self.agent2.x and self.agent1.y == self.agent2.y) or
@@ -114,13 +117,14 @@ class GameEnv:
 
         food_not_coll = foodList_1.copy()
 
-        #if not food_not_coll:
-            #terminal = True
-            #return terminal
 
         for food in self.food_objects:
             if food.is_collected:
                 food_not_coll.remove((food.x, food.y))
+
+        if not food_not_coll:
+            done = True
+            return done
 
         for food in self.food_objects:
             if food.is_collected:
@@ -155,27 +159,27 @@ class GameEnv:
         agent2_obs = self.agent2.get_observation(env_x_size=40, env_y_size=20)
         agent3_obs = self.agent3.get_observation(env_x_size=40, env_y_size=20)
 
+        rew_n = [agent1_reward, agent2_reward, agent3_reward]
+        obs_n = [agent1_obs, agent2_obs, agent3_obs]
 
-
-
-        return agent1_reward, agent2_reward, agent3_reward, agent1_obs, agent2_obs, agent3_obs
+        return rew_n, obs_n, done
 
     def contribute_matrix(self):
         a = np.ones([self.size_y + 2, self.size_x + 2, 3])
         a[1:-1, 1:-1, :] = 0
 
         for x, y in self.agent1_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
         for x, y in self.agent2_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
         for x, y in self.agent3_beam_set:
-            a[y + 1, x + 1, 0] = 0.5
-            a[y + 1, x + 1, 1] = 0.5
-            a[y + 1, x + 1, 2] = 0.5
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
 
         for food in self.food_objects:
             if not food.is_collected:
@@ -220,11 +224,3 @@ class GameEnv:
 
         a = np.stack([b, c, d], axis=2)
         return a
-
-    '''
-    def step(self, action1, action2, action3):
-        r1, r2, r3 = self.move(action1, action2, action3)
-        done = ###
-        state = self.render_env()
-
-        return state, r1, r2, r3, done'''
