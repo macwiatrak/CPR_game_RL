@@ -1,3 +1,4 @@
+import numpy as np
 
 
 class AgentObj:
@@ -163,7 +164,7 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
 
-    def get_observation(self, env_x_size, env_y_size):
+    '''def partial_observation(self, env_x_size, env_y_size):
         if self.direction == 0:
             if (env_x_size-20-self.x) > 0:
                 if (self.y-10) < 0:
@@ -225,6 +226,92 @@ class AgentObj:
             else:
                 obs = [(self.x + j, i) for i in range(self.y, env_y_size-1) for j in
                                 range(-10, 11)]
+        else:
+            assert self.direction in range(4), 'wrong direction'
+        return obs'''
+
+    def partial_observation(self, env_x_size, env_y_size):
+        obs = np.zeros([20, 21], dtype=object)
+        if self.direction == 0:
+            if (env_x_size-20-self.x) > 0:
+                if (self.y-10) < 0:
+                    for m in range(20):
+                        c=0
+                        for n in range(10-self.y, 21):
+                            obs[m][n] = (self.x+m, c)
+                            c+=1
+                elif (self.y+10) > (env_y_size-1):
+                    for m in range(20):
+                        c = self.y-10
+                        for n in range(10+env_y_size-self.y):
+                            obs[m][n] = (self.x+m, c)
+                            c+=1
+            else:
+                if (self.y-10) < 0:
+                    for m in range(env_x_size - self.x):
+                        c=0
+                        for n in range(10-self.y, 21):
+                            obs[m][n] = (self.x+m, c)
+                            c+=1
+                elif (self.y+10) > (env_y_size-1):
+                    for m in range(env_x_size - self.x):
+                        c = self.y-10
+                        for n in range(10+env_y_size-self.y):
+                            obs[m][n] = (self.x+m, c)
+                            c+=1
+        elif self.direction == 1:
+            if (self.x-10) < 0:
+                for m in range(self.y+1):
+                    c=0
+                    for n in range(10-self.x, 21):
+                        obs[m][n] = (c, self.y-m)
+                        c+=1
+            elif (self.x+10) > (env_x_size-1):
+                for m in range(self.y+1):
+                    c=self.x-10
+                    for n in range(10+env_x_size-self.x):
+                        obs[m][n] = (c, self.y-m)
+                        c+=1
+        elif self.direction == 2:
+            if (self.x-20) < 0:
+                if (self.y-10) < 0:
+                    for m in reversed(range(self.x+1)):
+                        c=self.y+10
+                        for n in range(21-10+self.y):
+                            obs[self.x-m][n] = (m, c)
+                            c-=1
+                elif (self.y+10) > (env_y_size-1):
+                    for m in reversed(range(self.x+1)):
+                        c=19
+                        for n in range(11-env_y_size+self.y, 21):
+                            obs[self.x-m][n] = (m, c)
+                            c-=1
+            else:
+                if (self.y-10) < 0:
+                    for m in reversed(range(self.x+1-20,self.x+1)):
+                        c=self.y+10
+                        for n in range(21-10+self.y):
+                            obs[self.x-m][n] = (m, c)
+                            c-=1
+
+                elif (self.y+10) > (env_y_size-1):
+                    for m in reversed(range(self.x+1-20,self.x+1)):
+                        c=19
+                        for n in range(11-env_y_size+self.y, 21):
+                            obs[self.x-m][n] = (m, c)
+                            c-=1
+        elif self.direction == 3:
+            if (self.x - 10) < 0:
+                for m in range(env_y_size-self.y):
+                    for n in reversed(range(0, self.x+10+1)):
+                        obs[m][self.x+10-n] = (n, self.y+m)
+
+            elif (self.x+10) > (env_x_size-1):
+                for m in range(env_y_size-self.y):
+                    c=39
+                    for n in range(11-env_x_size+self.x, 21):
+                        obs[m][n] = (c, self.y+m)
+                        c-=1
         else:
             assert self.direction in range(4), 'wrong direction'
         return obs
