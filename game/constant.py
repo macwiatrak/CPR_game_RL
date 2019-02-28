@@ -2,11 +2,11 @@ import numpy as np
 
 class Tile():
     empty = " "
-    input_agent = "X"
+    input_agent = "@"
     apple = "$"
     wall = "#"
     agent = "O"
-    direction="@"
+    direction="x"
     beam="*"
 
 
