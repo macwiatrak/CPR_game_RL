@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from environment import *
 
-for i in range(20):
+for i in range(3):
     env = GameEnv()
     env.reset()
 
