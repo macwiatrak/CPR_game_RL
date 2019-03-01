@@ -1,25 +1,3 @@
-import numpy as np
-
-class Tile():
-    empty = " "
-    input_agent = "@"
-    apple = "$"
-    wall = "#"
-    agent = "O"
-    direction="x"
-    beam="*"
-
-
-
-def grayscale(tile):
-    if tile == Tile.empty:
-        return np.float32(0)#np.uint8(255)
-    elif tile == Tile.fruit:
-        return np.float32(0.75)#np.uint8(200)
-    elif tile == Tile.snake:
-        return np.float32(0.25)#np.uint8(75)
-    else:
-        return np.float32(1.0)#np.uint8(0)
 
 
 foodList = [(0, 4), (0, 15), (1, 3), (1, 4), (1, 5), (1, 11), (1, 18), (2, 4), (2, 6), (2, 8), (2, 10), (2, 11),

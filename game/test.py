@@ -32,8 +32,9 @@ for i in range(3):
         agent2_reward += rew_n[1]
         agent3_reward += rew_n[2]
 
-        if rew_n[0] or rew_n[1] or rew_n[2]:
-            print(i, 'agent1 action: ', action1, 'agent2 action: ', action2, 'agent3 action: ', action3,)
+        #print(i, 'agent1_obs:', obs_n[0].shape, 'agent2_obs:', obs_n[1].shape, 'agent3_obs:', obs_n[2].shape)
+        #if rew_n[0] or rew_n[1] or rew_n[2]:
+         #   print(i, 'agent1 action: ', action1, 'agent2 action: ', action2, 'agent3 action: ', action3,)
             #print(i, 'agent1_obs:', obs_n[0])
             #print(i, 'agent1 reward: ', r1, 'agent2 reward', r2)
     print(i, 'agent1 cumulative reward: ', agent1_reward, 'agent2 cumulative reward: ', agent2_reward,
