@@ -5,14 +5,14 @@ class CellType(object):
     APPLE = "$"
     WALL = "#"
     OPPONENT = "O"
-    DIRECTION = "x"
+    AGENT_FRONT = "x"
     BEAM = "*"
 
 class Colors:
     SCREEN_BACKGROUND = (10, 10, 10)  # BLACK
     CELL_TYPE = {
         CellType.WALL: (125, 125, 125),  # GRAY
-        CellType.DIRECTION: (50, 50, 50),  # DARK GRAY
+        CellType.AGENT_FRONT: (50, 50, 50),  # DARK GRAY
         CellType.PLAYER: (0, 0, 255),  # BLUE
         CellType.OPPONENT: (255, 0, 0),  # RED
         CellType.APPLE: (0, 255, 0),  # GREEN

@@ -164,7 +164,6 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
 
-
     def partial_observation(self, env_x_size, env_y_size):
         obs = np.zeros([20, 21], dtype=object)
         if self.direction == 0:
@@ -251,7 +250,7 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
         return obs
 
-
+    '''
     def convert_observation_to_rgb(self, obs):
         observation_rgb = np.zeros([obs.shape[0], obs.shape[1], 3], 'int')
         for x in np.arange(obs.shape[0]):
@@ -260,19 +259,16 @@ class AgentObj:
                     observation_rgb[x, y, :] = Colors.SCREEN_BACKGROUND
                 else:
                     observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
-        return np.uint8(observation_rgb)
+        return np.uint8(observation_rgb)'''
 
-    '''def convert_to_view(self):
-        for m in obs.shape[0]:
-            for n in obs.shape[1]:
-                if obs[m][n] in food_not_coll:
-                    obs[m][n] = CellType.APPLE
-                elif obs[m][n] == (self.agent2.x, self.agent2.y):
-                    obs[m][n] = CellType.OPPONENT
-                elif obs[m][n] == (self.agent3.x, self.agent3.y):
-                    obs[m][n] = CellType.OPPONENT
-                elif obs[m][n] == (self.agent1.x, self.agent1.y):
-                    obs[m][n] = CellType.PLAYER
-                elif obs[m][n] in agent2_beam_set or in agent3_beam_set
-                    obs[m][n] = CellType.BEAM
-                elif obs[m][n] ==  ()'''
+    def get_front_player(self):
+        if self.direction == 0:
+            front = (self.x+1, self.y)
+        elif self.direction == 1:
+            front = (self.x, self.y+1)
+        elif self.direction == 2:
+            front = (self.x-1, self.y)
+        elif self.direction == 3:
+            front = (self.x, self.y-1)
+        return front
+
