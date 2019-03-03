@@ -6,7 +6,7 @@ for i in range(3):
     env = GameEnv()
     env.reset()
 
-    temp = env.render_env()
+    #temp = env.render_env()
     i = 0
     agent1_reward = 0
     agent2_reward = 0
