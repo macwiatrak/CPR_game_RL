@@ -46,10 +46,7 @@ class GameEnv:
 
         self.food_objects = []
 
-        #for x in foodList:
-         #   self.food_objects.append(FoodObj(x))
-
-        for x in test1:
+        for x in foodList:
             self.food_objects.append(FoodObj(x))
 
         def convert_observation_to_rgb(obs):
@@ -215,8 +212,7 @@ class GameEnv:
         agent2_reward = 0
         agent3_reward = 0
 
-        #food_not_coll = foodList_1.copy()
-        food_not_coll = test2.copy()
+        food_not_coll = foodList_1.copy()
 
 
         for food in self.food_objects:
