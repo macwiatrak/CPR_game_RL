@@ -1,4 +1,5 @@
 import numpy as np
+from celltype import *
 
 
 class AgentObj:
@@ -13,6 +14,7 @@ class AgentObj:
         # 0: right, 1:top 2: left. 3: bottom
         self.direction = direction
         self.mark = mark
+        self.observation = None
 
     def is_hidden(self):
         return self.hidden > 0
@@ -164,7 +166,30 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
         return beam_set
 
-    def partial_observation(self, env_x_size, env_y_size):
+    def get_front_player(self):
+        if self.direction == 0:
+            if self.x < 39:
+                front = (self.x + 1, self.y)
+            else:
+                front = (self.x, self.y)
+        elif self.direction == 1:
+            if self.y < 19:
+                front = (self.x, self.y + 1)
+            else:
+                front = (self.x, self.y)
+        elif self.direction == 2:
+            if self.x > 0:
+                front = (self.x - 1, self.y)
+            else:
+                front = (self.x, self.y)
+        elif self.direction == 3:
+            if self.y > 0:
+                front = (self.x, self.y - 1)
+            else:
+                front = (self.x, self.y)
+        return front
+    '''
+    def partial_observation(self, env_x_size, env_y_size): # def partial_observation(self, env_x_size, env_y_size, grid)
         obs = np.zeros([20, 21], dtype=object)
         if self.direction == 0:
             if (env_x_size-20-self.x) > 0:
@@ -248,6 +273,51 @@ class AgentObj:
                         c-=1
         else:
             assert self.direction in range(4), 'wrong direction'
+
+        return obs'''
+
+    def partial_observation(self, env_x_size, env_y_size, grid):
+        grid[self.x][self.y] = CellType.PLAYER
+        obs = np.full([20, 21], "#", dtype=object)
+        if self.direction == 0:
+            if (env_x_size-20-self.x) > 0:
+                if (self.y-10) < 0:
+                    obs[:,10-self.y:21]=grid[self.x:self.x+20, 0:self.y+11]
+                elif (self.y+10) > (env_y_size-1):
+                    obs[:,:10+env_y_size-self.y]=grid[self.x:self.x+20, self.y-10:]
+            else:
+                if (self.y-10) < 0:
+                    obs[:env_x_size - self.x, 10-self.y:21] = grid[self.x:,0:self.y+11]
+                elif (self.y+10) > (env_y_size-1):
+                    obs[:env_x_size - self.x, :10 + env_y_size - self.y] = grid[self.x:, self.y - 10:]
+        elif self.direction == 1:
+            if (self.x-10) < 0:
+                obs[:self.y + 1, 10 - self.x:21] = np.flip(grid[:self.x+11,:self.y+1],1).T
+            elif (self.x+10) > (env_x_size-1):
+                obs[:self.y + 1, :10 + env_x_size - self.x] = np.flip(grid[self.x - 10:, :self.y + 1], 1).T
+            else:
+                obs[:self.y + 1, :] = np.flip(grid[self.x - 10:self.x + 11, :self.y + 1], 1).T
+        elif self.direction == 2:
+            if (self.x-20) < 0:
+                if (self.y-10) < 0:
+                    obs[:self.x + 1, :21 - 10 + self.y] = np.flip(grid[:self.x + 1, :self.y + 11])
+                elif (self.y+10) > (env_y_size-1):
+                    obs[:self.x + 1, 11 - env_y_size + self.y: 21] = np.flip(grid[:self.x + 1, self.y - 10:])
+            else:
+                if (self.y-10) < 0:
+                    obs[:, :21 - 10 + self.y] = np.flip(grid[self.x - 19:self.x + 1, :self.y + 11])
+                elif (self.y+10) > (env_y_size-1):
+                    obs[:, 11 - env_y_size + self.y: 21] = np.flip(grid[self.x - 19:self.x + 1, self.y - 10:])
+        elif self.direction == 3:
+            if (self.x - 10) < 0:
+                obs[:env_y_size - self.y, :self.x + 10 + 1] = np.flip(grid[:self.x + 11, self.y:], 0).T
+            elif (self.x+10) > (env_x_size-1):
+                obs[:env_y_size - self.y, 11 - env_x_size + self.x:21] = np.flip(grid[self.x - 10:, self.y:], 0).T
+            else:
+                obs[:env_y_size - self.y, :] = np.flip(grid[self.x - 10:self.x + 11, self.y:], 0).T
+        else:
+            assert self.direction in range(4), 'wrong direction'
+
         return obs
 
     '''
@@ -261,14 +331,4 @@ class AgentObj:
                     observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
         return np.uint8(observation_rgb)'''
 
-    def get_front_player(self):
-        if self.direction == 0:
-            front = (self.x+1, self.y)
-        elif self.direction == 1:
-            front = (self.x, self.y+1)
-        elif self.direction == 2:
-            front = (self.x-1, self.y)
-        elif self.direction == 3:
-            front = (self.x, self.y-1)
-        return front
 
