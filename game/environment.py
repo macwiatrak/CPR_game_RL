@@ -2,6 +2,7 @@ import numpy as np
 import scipy.misc
 import random
 import math
+import numpy as np
 
 from agent import *
 from foodobj import *
@@ -25,7 +26,7 @@ class GameEnv:
     def reset(self):
         self.agent1 = AgentObj(coordinates=(0, 1), type=0, name='agent1')
         self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
-        self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent2', direction=2)
+        self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent3', direction=2)
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left,
                                self.agent1.move_right,
                                self.agent1.turn_left, self.agent1.turn_right, self.agent1.beam, self.agent1.stay]
@@ -35,14 +36,14 @@ class GameEnv:
         self.agent3_actions = [self.agent3.move_forward, self.agent3.move_backward, self.agent3.move_left,
                                self.agent3.move_right,
                                self.agent3.turn_left, self.agent3.turn_right, self.agent3.beam, self.agent3.stay]
+
+        agent_list = [self.agent1, self.agent2, self.agent3]
+
         self.agent1_beam_set = []
         self.agent2_beam_set = []
         self.agent3_beam_set = []
 
-        agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20)
-        agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20)
-        agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20)
-
+        beam_set_list = self.agent1_beam_set + self.agent2_beam_set + self.agent3_beam_set
 
         self.food_objects = []
 
@@ -59,95 +60,27 @@ class GameEnv:
                         observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
             return np.uint8(observation_rgb)
 
-        for m in range(agent1_obs.shape[0]):
-            for n in range(agent1_obs.shape[1]):
-                if agent1_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent1_obs[m][n] = CellType.PLAYER
-                elif agent1_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent1_obs[m][n] = CellType.OPPONENT
-                elif agent1_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent1_obs[m][n] = CellType.OPPONENT
-                elif agent1_obs[m][n] == self.agent1.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] == self.agent2.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] == self.agent3.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] in foodList:
-                    agent1_obs[m][n] = CellType.APPLE
-                elif agent1_obs[m][n] in self.agent1_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] in self.agent2_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] in self.agent3_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] == 0:
-                    agent1_obs[m][n] = CellType.WALL
-                else:
-                    agent1_obs[m][n] = CellType.EMPTY
+        # get the 40 x 20 grid to be used for partial observation
+        grid_reset = np.full([40, 20], ' ', dtype=object)
+        for i in foodList:
+            grid_reset[i[0]][i[1]] = CellType.APPLE
+        for agent in agent_list:
+            grid_reset[agent.get_front_player()[0]][agent.get_front_player()[1]] = CellType.AGENT_FRONT
+            grid_reset[agent.x][agent.y] = CellType.OPPONENT
+        if beam_set_list:
+            for beam in beam_set_list:
+                grid_reset[beam[0]][beam[1]] = CellType.BEAM
 
-        for m in range(agent2_obs.shape[0]):
-            for n in range(agent2_obs.shape[1]):
-                if agent2_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent2_obs[m][n] = CellType.PLAYER
-                elif agent2_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent2_obs[m][n] = CellType.OPPONENT
-                elif agent2_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent2_obs[m][n] = CellType.OPPONENT
-                elif agent2_obs[m][n] == self.agent1.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] == self.agent2.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] == self.agent3.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] in foodList:
-                    agent2_obs[m][n] = CellType.APPLE
-                elif agent2_obs[m][n] in self.agent1_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] in self.agent2_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] in self.agent3_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] == 0:
-                    agent2_obs[m][n] = CellType.WALL
-                else:
-                    agent2_obs[m][n] = CellType.EMPTY
+        agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
+        agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
+        agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
 
-        for m in range(agent3_obs.shape[0]):
-            for n in range(agent3_obs.shape[1]):
-                if agent3_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent3_obs[m][n] = CellType.PLAYER
-                elif agent3_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent3_obs[m][n] = CellType.OPPONENT
-                elif agent3_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent3_obs[m][n] = CellType.OPPONENT
-                elif agent3_obs[m][n] == self.agent1.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] == self.agent2.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] == self.agent3.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] in foodList:
-                    agent3_obs[m][n] = CellType.APPLE
-                elif agent3_obs[m][n] in self.agent1_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] in self.agent2_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] in self.agent3_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] == 0:
-                    agent3_obs[m][n] = CellType.WALL
-                else:
-                    agent3_obs[m][n] = CellType.EMPTY
-
-        agent1_obs = convert_observation_to_rgb(agent1_obs)
-        agent2_obs = convert_observation_to_rgb(agent2_obs)
-        agent3_obs = convert_observation_to_rgb(agent3_obs)
-
-        return [agent1_obs, agent2_obs, agent3_obs]
+        return [convert_observation_to_rgb(agent1_obs), convert_observation_to_rgb(agent2_obs),
+                convert_observation_to_rgb(agent3_obs)]
 
     def step(self, action_n):
 
+        agent_list = [self.agent1, self.agent2, self.agent3]
 
         assert action_n[0] in range(8), 'agent1 take wrong action'
         assert action_n[1] in range(8), 'agent2 take wrong action'
@@ -157,13 +90,13 @@ class GameEnv:
         agent2_old_x, agent2_old_y = self.agent2.x, self.agent2.y
         agent3_old_x, agent3_old_y = self.agent3.x, self.agent3.y
 
-        self.agent1.sub_hidden()
-        self.agent2.sub_hidden()
-        self.agent3.sub_hidden()
+        for agent in agent_list:
+            agent.sub_hidden()
 
         self.agent1_beam_set = []
         self.agent2_beam_set = []
         self.agent3_beam_set = []
+
 
         if not self.agent1.is_hidden():
             agent1_action_return = self.agent1_actions[action_n[0]](env_x_size=self.size_x, env_y_size=self.size_y)
@@ -224,11 +157,6 @@ class GameEnv:
         else:
             done = False
 
-        '''if not food_not_coll:
-            done = 'gameover'
-        else:
-            done = 'play'''
-
         for food in self.food_objects:
             if food.is_collected:
 
@@ -251,17 +179,12 @@ class GameEnv:
                 elif not self.agent3.is_hidden() and food.x == self.agent3.x and food.y == self.agent3.y:
                     agent3_reward = food.eat()
 
-        if (self.agent1.x, self.agent1.y) in (self.agent2_beam_set or self.agent3_beam_set):
-            self.agent1.add_mark(self.agent_hidden)
-        if (self.agent2.x, self.agent2.y) in (self.agent1_beam_set or self.agent3_beam_set):
-            self.agent2.add_mark(self.agent_hidden)
-        if (self.agent3.x, self.agent3.y) in (self.agent1_beam_set or self.agent2_beam_set):
-            self.agent3.add_mark(self.agent_hidden)
+        beam_set_list = self.agent1_beam_set + self.agent2_beam_set + self.agent3_beam_set
 
-        agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20)
-        agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20)
-        agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20)
-
+        for agent in agent_list:
+            if not agent.is_hidden():
+                if (agent.x,agent.y) in beam_set_list:
+                    agent.add_mark(self.agent_hidden)
 
         def convert_observation_to_rgb(obs):
             observation_rgb = np.zeros([obs.shape[0], obs.shape[1], 3], 'int')
@@ -273,94 +196,25 @@ class GameEnv:
                         observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
             return np.uint8(observation_rgb)
 
-        for m in range(agent1_obs.shape[0]):
-            for n in range(agent1_obs.shape[1]):
-                if agent1_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent1_obs[m][n] = CellType.PLAYER
-                elif agent1_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent1_obs[m][n] = CellType.OPPONENT
-                elif agent1_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent1_obs[m][n] = CellType.OPPONENT
-                elif agent1_obs[m][n] == self.agent1.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] == self.agent2.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] == self.agent3.get_front_player():
-                    agent1_obs[m][n] = CellType.AGENT_FRONT
-                elif agent1_obs[m][n] in food_not_coll:
-                    agent1_obs[m][n] = CellType.APPLE
-                elif agent1_obs[m][n] in self.agent1_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] in self.agent2_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] in self.agent3_beam_set:
-                    agent1_obs[m][n] = CellType.BEAM
-                elif agent1_obs[m][n] == 0:
-                    agent1_obs[m][n] = CellType.WALL
-                else:
-                    agent1_obs[m][n] = CellType.EMPTY
 
-        for m in range(agent2_obs.shape[0]):
-            for n in range(agent2_obs.shape[1]):
-                if agent2_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent2_obs[m][n] = CellType.PLAYER
-                elif agent2_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent2_obs[m][n] = CellType.OPPONENT
-                elif agent2_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent2_obs[m][n] = CellType.OPPONENT
-                elif agent2_obs[m][n] == self.agent1.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] == self.agent2.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] == self.agent3.get_front_player():
-                    agent2_obs[m][n] = CellType.AGENT_FRONT
-                elif agent2_obs[m][n] in food_not_coll:
-                    agent2_obs[m][n] = CellType.APPLE
-                elif agent2_obs[m][n] in self.agent1_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] in self.agent2_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] in self.agent3_beam_set:
-                    agent2_obs[m][n] = CellType.BEAM
-                elif agent2_obs[m][n] == 0:
-                    agent2_obs[m][n] = CellType.WALL
-                else:
-                    agent2_obs[m][n] = CellType.EMPTY
+        grid_step = np.full([40, 20], ' ', dtype=object)
+        for i in food_not_coll:
+            grid_step[i[0]][i[1]] = CellType.APPLE
+        for agent in agent_list:
+            if not agent.is_hidden():
+                grid_step[agent.get_front_player()[0]][agent.get_front_player()[1]] = CellType.AGENT_FRONT
+                grid_step[agent.x][agent.y] = CellType.OPPONENT
+        if beam_set_list:
+            for beam in beam_set_list:
+                grid_step[beam[0]][beam[1]] = CellType.BEAM
 
-        for m in range(agent3_obs.shape[0]):
-            for n in range(agent3_obs.shape[1]):
-                if agent3_obs[m][n] == (self.agent3.x, self.agent3.y):
-                    agent3_obs[m][n] = CellType.PLAYER
-                elif agent3_obs[m][n] == (self.agent1.x, self.agent1.y):
-                    agent3_obs[m][n] = CellType.OPPONENT
-                elif agent3_obs[m][n] == (self.agent2.x, self.agent2.y):
-                    agent3_obs[m][n] = CellType.OPPONENT
-                elif agent3_obs[m][n] == self.agent1.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] == self.agent2.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] == self.agent3.get_front_player():
-                    agent3_obs[m][n] = CellType.AGENT_FRONT
-                elif agent3_obs[m][n] in food_not_coll:
-                    agent3_obs[m][n] = CellType.APPLE
-                elif agent3_obs[m][n] in self.agent1_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] in self.agent2_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] in self.agent3_beam_set:
-                    agent3_obs[m][n] = CellType.BEAM
-                elif agent3_obs[m][n] == 0:
-                    agent3_obs[m][n] = CellType.WALL
-                else:
-                    agent3_obs[m][n] = CellType.EMPTY
-
-        agent1_obs = convert_observation_to_rgb(agent1_obs)
-        agent2_obs = convert_observation_to_rgb(agent2_obs)
-        agent3_obs = convert_observation_to_rgb(agent3_obs)
+        agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20, grid=grid_step)
+        agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20, grid=grid_step)
+        agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20, grid=grid_step)
 
         rew_n = [agent1_reward, agent2_reward, agent3_reward]
-        obs_n = [agent1_obs, agent2_obs, agent3_obs]
-
+        obs_n = [convert_observation_to_rgb(agent1_obs), convert_observation_to_rgb(agent2_obs),
+                 convert_observation_to_rgb(agent3_obs)]
         return rew_n, obs_n, done
 
     def contribute_matrix(self):
@@ -423,5 +277,6 @@ class GameEnv:
 
         a = np.stack([b, c, d], axis=2)
         return a
+
 
 
