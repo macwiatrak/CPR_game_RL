@@ -10,7 +10,7 @@ while episode < 4:
     env = GameEnv()
     episode += 1
     obs_n = env.reset()
-    #temp = env.render_env()
+    #env.render_env()
 
     agent1_reward = 0
     agent2_reward = 0
@@ -20,18 +20,12 @@ while episode < 4:
     gameover = False
     while not gameover:
         step += 1
-        #temp = env.render_env()
-        #plt.imshow(temp)
-        #plt.show(block=False)
-        #plt.pause(0.01)
-        #plt.clf()
-
+        #env.render_env()
         #action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
 
-        action1 = np.random.randint(8)
-        action2 = np.random.randint(8)
-        action3 = np.random.randint(8)
-        action_n = [action1, action2, action3]
+        # take a random action
+        action_n = [np.random.randint(8) for agent in range(3)]
+        #action_n = [action1, action2, action3]
 
         rew_n, new_obs_n, done = env.step(action_n)
 
