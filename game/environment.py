@@ -28,6 +28,8 @@ class GameEnv:
         self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
         self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent3', direction=2)
 
+        agent_list = [self.agent1, self.agent2, self.agent3]
+
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left,
                                self.agent1.move_right,
                                self.agent1.turn_left, self.agent1.turn_right, self.agent1.beam, self.agent1.stay]
@@ -38,7 +40,6 @@ class GameEnv:
                                self.agent3.move_right,
                                self.agent3.turn_left, self.agent3.turn_right, self.agent3.beam, self.agent3.stay]
 
-        agent_list = [self.agent1, self.agent2, self.agent3]
 
         self.agent1_beam_set = []
         self.agent2_beam_set = []
@@ -52,13 +53,13 @@ class GameEnv:
             self.food_objects.append(FoodObj(x))
 
         def convert_observation_to_rgb(obs):
-            observation_rgb = np.zeros([obs.shape[0], obs.shape[1], 3], 'int')
+            observation_rgb = np.zeros([3, obs.shape[0], obs.shape[1]], 'int')
             for x in np.arange(obs.shape[0]):
                 for y in np.arange(obs.shape[1]):
                     if obs[x, y] == CellType.EMPTY:
-                        observation_rgb[x, y, :] = Colors.SCREEN_BACKGROUND
+                        observation_rgb[:, x, y] = Colors.SCREEN_BACKGROUND
                     else:
-                        observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
+                        observation_rgb[:, x, y] = Colors.CELL_TYPE[obs[x, y]]
             return np.uint8(observation_rgb)
 
         # get the 40 x 20 grid to be used for partial observation
@@ -75,6 +76,7 @@ class GameEnv:
         agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
         agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
         agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
+
 
         return [convert_observation_to_rgb(agent1_obs), convert_observation_to_rgb(agent2_obs),
                 convert_observation_to_rgb(agent3_obs)]
@@ -188,13 +190,13 @@ class GameEnv:
                     agent.add_mark(self.agent_hidden)
 
         def convert_observation_to_rgb(obs):
-            observation_rgb = np.zeros([obs.shape[0], obs.shape[1], 3], 'int')
+            observation_rgb = np.zeros([3, obs.shape[0], obs.shape[1]], 'int')
             for x in np.arange(obs.shape[0]):
                 for y in np.arange(obs.shape[1]):
                     if obs[x, y] == CellType.EMPTY:
-                        observation_rgb[x, y, :] = Colors.SCREEN_BACKGROUND
+                        observation_rgb[:, x, y] = Colors.SCREEN_BACKGROUND
                     else:
-                        observation_rgb[x, y, :] = Colors.CELL_TYPE[obs[x, y]]
+                        observation_rgb[:, x, y] = Colors.CELL_TYPE[obs[x, y]]
             return np.uint8(observation_rgb)
 
 
