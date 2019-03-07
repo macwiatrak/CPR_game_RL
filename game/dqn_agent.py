@@ -28,9 +28,11 @@ class DQNAgent:
         self.model = Sequential()
         self.model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(3, 20, 21),
                                      data_format='channels_first'))
+        self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+        self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(256, activation="relu"))
+        self.model.add(layers.Dense(32, activation="relu"))
         self.model.add(layers.Dense(self.action_space, activation="relu"))
         self.model.compile(loss="logcosh", optimizer=Adam(lr=LEARNING_RATE))
 
