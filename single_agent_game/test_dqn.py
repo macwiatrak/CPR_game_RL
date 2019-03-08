@@ -11,12 +11,10 @@ while episode < 2000:
     env = GameEnv()
     episode += 1
     obs_n = env.reset()
-    obs_n[1] = obs_n[1].reshape(1, obs_n[1].shape[0], obs_n[1].shape[1], obs_n[1].shape[2])
+    obs_n = obs_n.reshape(1, obs_n.shape[0], obs_n.shape[1], obs_n.shape[2])
     #env.render_env()
 
     agent1_reward = 0
-    agent2_reward = 0
-    agent3_reward = 0
 
     step = 0
     gameover = False
@@ -27,22 +25,17 @@ while episode < 2000:
 
         # take a random action
         #obs_n[0] = obs_n[0].reshape(1, obs_n[0].shape[0], obs_n[0].shape[1], obs_n[0].shape[2])
-        action2 = DQN_agent.act(obs_n[1])
-        #action1 = np.random.randint(8)
-        action1 = np.random.randint(8)
-        action3 = np.random.randint(8)
+        action1 = DQN_agent.act(obs_n)
         #action_n = [np.random.randint(8) for agent in range(3)]
-        action_n = [action1, action2, action3]
+        action_n = [action1]
 
         rew_n, new_obs_n, done = env.step(action_n)
-        new_obs_n[1] = new_obs_n[1].reshape(1, new_obs_n[1].shape[0], new_obs_n[1].shape[1], new_obs_n[1].shape[2])
+        new_obs_n = new_obs_n.reshape(1, new_obs_n.shape[0], new_obs_n.shape[1], new_obs_n.shape[2])
 
-        agent1_reward += rew_n[0]
-        agent2_reward += rew_n[1]
-        agent3_reward += rew_n[2]
+        agent1_reward += rew_n
 
         terminal = (step >= max_episode_len)
-        DQN_agent.remember(obs_n[1], action1, rew_n[1], new_obs_n[1], terminal)
+        DQN_agent.remember(obs_n, action1, rew_n, new_obs_n, terminal)
         if done or terminal:
             gameovers += 1
             print(step, 'gameovers:', gameovers)
@@ -52,5 +45,4 @@ while episode < 2000:
         obs_n = new_obs_n
         DQN_agent.experience_replay()
 
-    print(step, 'agent1 cumulative reward: ', agent1_reward, 'agent2 cumulative reward: ', agent2_reward,
-          'agent3 cumulative reward:', agent3_reward)
+    print(step, 'agent1 cumulative reward: ', agent1_reward)
