@@ -24,7 +24,7 @@ class GameEnv:
         self.reset()
 
     def reset(self):
-        self.agent1 = AgentObj(coordinates=(0, 1), type=0, name='agent1')
+        self.agent1 = AgentObj(coordinates=(0, 4), type=0, name='agent1')
         #self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
         #self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent3', direction=2)
 
@@ -269,7 +269,7 @@ class GameEnv:
         a = np.stack([b, c, d], axis=2)
         plt.imshow(a)
         plt.show(block=False)
-        plt.pause(10)
+        #plt.pause(10)
         plt.clf()
         #return a
 

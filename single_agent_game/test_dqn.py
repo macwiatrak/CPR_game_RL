@@ -1,6 +1,5 @@
-import matplotlib.pyplot as plt
 
-from environment import *
+#from environment import *
 from dqn_agent import *
 episode = 0
 max_episode_len = 1000

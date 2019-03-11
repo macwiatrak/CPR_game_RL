@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 
 
 from environment import *
@@ -11,7 +10,8 @@ while episode < 10:
     env = GameEnv()
     episode += 1
     obs_n = env.reset()
-    #env.render_env()
+    env.render_env()
+    print(obs_n)
 
     agent1_reward = 0
 
@@ -19,7 +19,7 @@ while episode < 10:
     gameover = False
     while not gameover:
         step += 1
-        #env.render_env()
+        env.render_env()
         #action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
 
         # take a random action
