@@ -11,7 +11,7 @@ while episode < 100:
     env = GameEnv()
     episode += 1
     obs_n = env.reset()
-    env.render_env()
+    #env.render_env()
 
     agent1_reward = 0
     agent2_reward = 0
@@ -21,7 +21,7 @@ while episode < 100:
     gameover = False
     while not gameover:
         step += 1
-        env.render_env()
+        #env.render_env()
         #action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
 
         # take a random action

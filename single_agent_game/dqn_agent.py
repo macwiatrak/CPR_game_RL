@@ -7,14 +7,14 @@ from keras.optimizers import Adam
 from keras import layers
 
 GAMMA = 0.99
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.001
 
 MEMORY_SIZE = 1000000
 BATCH_SIZE = 32
 
 EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.1
-EXPLORATION_DECAY = 0.995
+EXPLORATION_DECAY = 0.95
 
 
 class DQNAgent:
@@ -32,8 +32,7 @@ class DQNAgent:
         self.model.add(layers.Conv2D(32, (3, 3), activation='relu'))
         self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(32, activation="relu"))
-        self.model.add(layers.Dense(32, activation="relu"))
+        self.model.add(layers.Dense(128, activation="relu"))
         self.model.add(layers.Dense(self.action_space, activation="linear"))
         self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 
