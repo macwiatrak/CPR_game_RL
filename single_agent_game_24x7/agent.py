@@ -1,6 +1,6 @@
 import numpy as np
 from celltype import *
-
+from foodobj import *
 
 class AgentObj:
     def __init__(self, coordinates, type, name, direction=0, mark=0, hidden=0):
@@ -136,13 +136,13 @@ class AgentObj:
                 front = (self.x, self.y)
         return front
 
-    def partial_observation(self, env_x_size, env_y_size, grid):
+    def partial_observation(self, env_x_size, env_y_size, grid, obs_rows, obs_cols):
         grid[self.x][self.y] = CellType.PLAYER
         obs = np.full([10, 11], "#", dtype=object)
         if self.direction == 0:
-            if (env_x_size-10-self.x) > 0:
-                if (self.y-5) < 0:
-                    obs[:,5-self.y:11]=grid[self.x:self.x+10, 0:self.y+6]
+            if (1/2*env_x_size-self.x) > 0:
+                if (self.y-1/2*env_y_size) < 0:
+                    obs[:,1/2*env_y_size-self.y:obs_cols]=grid[self.x:self.x+1/2*env_x_size, 0:self.y+(1/2*env_y_size+1)]
                 elif (self.y+10) > (env_y_size-1):
                     obs[:,:5+env_y_size-self.y]=grid[self.x:self.x+10, self.y-5:]
             else:
@@ -179,6 +179,5 @@ class AgentObj:
             assert self.direction in range(4), 'wrong direction'
 
         return obs
-
 
 
