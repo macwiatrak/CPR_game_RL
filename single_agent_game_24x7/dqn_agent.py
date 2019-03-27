@@ -27,7 +27,7 @@ class DQNAgent:
         self.memory = deque(maxlen=MEMORY_SIZE)
 
         self.model = Sequential()
-        self.model.add(layers.Dense(32, input_shape=(3*10*11,), activation="relu"))
+        self.model.add(layers.Dense(32, input_shape=(3*5*13,), activation="relu"))
         self.model.add(layers.Dense(32, activation="relu"))
         self.model.add(layers.Dense(self.action_space, activation="softmax"))
         self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))

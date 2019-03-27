@@ -100,7 +100,7 @@ class AgentObj:
     def stay(self, **kwargs):
         pass
 
-    def beam(self, env_x_size, env_y_size):
+    '''def beam(self, env_x_size, env_y_size):
         if self.direction == 0:
             beam_set = [(i + 1, self.y) for i in range(self.x, env_x_size - 1)]
         elif self.direction == 1:
@@ -111,7 +111,7 @@ class AgentObj:
             beam_set = [(self.x, i + 1) for i in range(self.y, env_y_size - 1)]
         else:
             assert self.direction in range(4), 'wrong direction'
-        return beam_set
+        return beam_set'''
 
     def get_front_player(self, env_x_size, env_y_size):
         if self.direction == 0:
@@ -138,46 +138,61 @@ class AgentObj:
 
     def partial_observation(self, env_x_size, env_y_size, grid, obs_rows, obs_cols):
         grid[self.x][self.y] = CellType.PLAYER
-        obs = np.full([10, 11], "#", dtype=object)
+        obs = np.full([obs_rows, obs_cols], "#", dtype=object)
         if self.direction == 0:
-            if (1/2*env_x_size-self.x) > 0:
-                if (self.y-1/2*env_y_size) < 0:
-                    obs[:,1/2*env_y_size-self.y:obs_cols]=grid[self.x:self.x+1/2*env_x_size, 0:self.y+(1/2*env_y_size+1)]
-                elif (self.y+10) > (env_y_size-1):
-                    obs[:,:5+env_y_size-self.y]=grid[self.x:self.x+10, self.y-5:]
+            if self.x+obs_rows <= env_x_size:
+                obs[:, (int(obs_cols / 2)) - self.y:obs_cols - self.y] = grid[self.x:self.x + obs_rows, :]
             else:
-                if (self.y-5) < 0:
-                    obs[:env_x_size - self.x, 5-self.y:11] = grid[self.x:,0:self.y+6]
-                elif (self.y+5) > (env_y_size-1):
-                    obs[:env_x_size - self.x, :5 + env_y_size - self.y] = grid[self.x:, self.y - 5:]
+                obs[:(env_x_size - self.x), (int(obs_cols / 2)) - self.y:obs_cols - self.y] = grid[self.x:, :]
         elif self.direction == 1:
-            if (self.x-5) < 0:
-                obs[:self.y + 1, 5 - self.x:11] = np.flip(grid[:self.x+6,:self.y+1],1).T
-            elif (self.x+5) > (env_x_size-1):
-                obs[:self.y + 1, :5 + env_x_size - self.x] = np.flip(grid[self.x - 5:, :self.y + 1], 1).T
+            if self.y <= 3:
+                if (self.x - int(obs_cols / 2)) < 0:
+                    obs[:self.y + 1, (int(obs_cols / 2)) - self.x:obs_cols + self.x] = \
+                        np.flip(grid[:self.x + (int(obs_cols / 2)) + 1, :self.y + 1], 1).T
+                elif self.x + int(obs_cols / 2) >= env_x_size:
+                    obs[:self.y + 1, :obs_cols - (int(obs_cols / 2) - (env_x_size - self.x - 1))] = \
+                        np.flip(grid[self.x - (int(obs_cols / 2)):, :self.y + 1], 1).T
+                else:
+                    obs[:self.y + 1, :] = \
+                        np.flip(grid[self.x - int(obs_cols / 2):self.x + int(obs_cols / 2) + 1, :self.y + 1], 1).T
             else:
-                obs[:self.y + 1, :] = np.flip(grid[self.x - 5:self.x + 6, :self.y + 1], 1).T
+                if (self.x - int(obs_cols / 2)) < 0:
+                    obs[:obs_rows, (int(obs_cols / 2)) - self.x:obs_cols + self.x] = \
+                        np.flip(grid[:self.x + (int(obs_cols / 2)) + 1, self.y - 4:self.y + 1], 1).T
+                elif self.x + int(obs_cols / 2) >= env_x_size:
+                    obs[:obs_rows, :obs_cols - (int(obs_cols / 2) - (env_x_size - self.x - 1))] = \
+                        np.flip(grid[self.x - (int(obs_cols / 2)):, self.y - 4:self.y + 1], 1).T
+                else:
+                    obs[:obs_rows, :] = \
+                        np.flip(grid[self.x - int(obs_cols / 2):self.x + int(obs_cols / 2) + 1, self.y - 4:self.y + 1], 1).T
         elif self.direction == 2:
-            if (self.x-10) < 0:
-                if (self.y-5) < 0:
-                    obs[:self.x + 1, :11 - 5 + self.y] = np.flip(grid[:self.x + 1, :self.y + 6])
-                elif (self.y+10) > (env_y_size-1):
-                    obs[:self.x + 1, 6 - env_y_size + self.y: 11] = np.flip(grid[:self.x + 1, self.y - 5:])
+            if self.x < obs_rows - 1:
+                obs[:self.x + 1, self.y:self.y + 7] = np.flip(grid[:self.x + 1, :])
             else:
-                if (self.y-5) < 0:
-                    obs[:, :11 - 5 + self.y] = np.flip(grid[self.x - 9:self.x + 1, :self.y + 6])
-                elif (self.y+10) > (env_y_size-1):
-                    obs[:, 6 - env_y_size + self.y: 11] = np.flip(grid[self.x - 9:self.x + 1, self.y - 5:])
+                obs[:, self.y:self.y + 7] = np.flip(grid[self.x - (obs_rows - 1):self.x + 1, :])
         elif self.direction == 3:
-            if (self.x - 5) < 0:
-                obs[:env_y_size - self.y, :self.x + 5 + 1] = np.flip(grid[:self.x + 6, self.y:], 0).T
-            elif (self.x+5) > (env_x_size-1):
-                obs[:env_y_size - self.y, 6 - env_x_size + self.x:11] = np.flip(grid[self.x - 5:, self.y:], 0).T
+            if self.y >= 3:
+                if (self.x - int(obs_cols / 2)) < 0:
+                    obs[:env_y_size - self.y, :self.x + int(obs_cols / 2) + 1] = \
+                        np.flip(grid[:self.x + int(obs_cols / 2) + 1, self.y:], 0).T
+                elif self.x + int(obs_cols / 2) >= env_x_size:
+                    obs[:env_y_size - self.y, int(obs_cols / 2) + 1 - env_x_size + self.x:obs_cols] = \
+                        np.flip(grid[self.x - (int(obs_cols / 2)):, self.y:], 0).T
+                else:
+                    obs[:env_y_size - self.y, :] = \
+                        np.flip(grid[self.x - int(obs_cols / 2):self.x + int(obs_cols / 2) + 1, self.y:], 0).T
             else:
-                obs[:env_y_size - self.y, :] = np.flip(grid[self.x - 5:self.x + 6, self.y:], 0).T
+                if (self.x - int(obs_cols / 2)) < 0:
+                    obs[:obs_rows, :self.x + int(obs_cols / 2) + 1] = \
+                        np.flip(grid[:self.x + int(obs_cols / 2) + 1, self.y:self.y + 5], 0).T
+                elif self.x + int(obs_cols / 2) >= env_x_size:
+                    obs[:obs_rows, int(obs_cols / 2) + 1 - env_x_size + self.x:obs_cols] = \
+                            np.flip(grid[self.x - (int(obs_cols / 2)):, self.y:self.y + 5], 0).T
+                else:
+                    obs[:obs_rows, :] = \
+                        np.flip(grid[self.x - int(obs_cols / 2):self.x + int(obs_cols / 2) + 1, self.y:self.y + 5], 0).T
         else:
             assert self.direction in range(4), 'wrong direction'
-
-        return obs
+        return np.flip(obs, 0)
 
 

@@ -63,7 +63,7 @@ class GameEnv:
             return observation_rgb
 
         # get the 40 x 20 grid to be used for partial observation
-        grid_reset = np.full([20, 10], ' ', dtype=object)
+        grid_reset = np.full([self.size_x, self.size_y], ' ', dtype=object)
         for i in foodList:
             grid_reset[i[0]][i[1]] = CellType.APPLE
         for agent in agent_list:
@@ -201,7 +201,7 @@ class GameEnv:
             observation_rgb = observation_rgb.flatten()
             return observation_rgb
 
-        grid_step = np.full([20, 10], ' ', dtype=object)
+        grid_step = np.full([self.size_x, self.size_y], ' ', dtype=object)
         for i in food_not_coll:
             grid_step[i[0]][i[1]] = CellType.APPLE
         for agent in agent_list:

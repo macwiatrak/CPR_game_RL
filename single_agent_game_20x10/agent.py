@@ -160,7 +160,7 @@ class AgentObj:
         elif self.direction == 2:
             if (self.x-10) < 0:
                 if (self.y-5) < 0:
-                    obs[:self.x_ + 1, :11 - 5 + self.y] = np.flip(grid[:self.x + 1, :self.y + 6])
+                    obs[:self.x + 1, :11 - 5 + self.y] = np.flip(grid[:self.x + 1, :self.y + 6])
                 elif (self.y+10) > (env_y_size-1):
                     obs[:self.x + 1, 6 - env_y_size + self.y: 11] = np.flip(grid[:self.x + 1, self.y - 5:])
             else:

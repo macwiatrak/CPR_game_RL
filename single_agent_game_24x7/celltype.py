@@ -6,7 +6,7 @@ class CellType(object):
     WALL = "#"
     OPPONENT = "O"
     AGENT_FRONT = "x"
-    BEAM = "*"
+    #BEAM = "*"
 
 class Colors:
     SCREEN_BACKGROUND = (10, 10, 10)  # BLACK
@@ -16,5 +16,5 @@ class Colors:
         CellType.PLAYER: (0, 0, 255),  # BLUE
         CellType.OPPONENT: (255, 0, 0),  # RED
         CellType.APPLE: (0, 255, 0),  # GREEN
-        CellType.BEAM: (255, 204, 51),  # Yellow
+        #CellType.BEAM: (255, 204, 51),  # Yellow
     }

@@ -4,7 +4,7 @@ from dqn_agent import *
 episode = 0
 max_episode_len = 1000
 gameovers = 0
-DQN_agent = DQNAgent(7)
+DQN_agent = DQNAgent(8)
 step_cumulative = 0
 
 while episode < 2000:
