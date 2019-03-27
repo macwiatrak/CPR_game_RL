@@ -1,7 +1,5 @@
-import numpy as np
 import scipy.misc
 import random
-import math
 
 from agent import *
 from foodobj import *
@@ -24,16 +22,26 @@ class GameEnv:
         self.reset()
 
     def reset(self):
-        self.agent1 = AgentObj(coordinates=(0, 4), type=0, name='agent1')
+        self.agent1 = AgentObj(coordinates=(1, 5), type=0, name='agent1')
+        #self.agent2 = AgentObj(coordinates=(38, 17), type=0, name='agent2', direction=1)
+        #self.agent3 = AgentObj(coordinates=(35, 15), type=0, name='agent3', direction=2)
 
         agent_list = [self.agent1]
 
         self.agent1_actions = [self.agent1.move_forward, self.agent1.move_backward, self.agent1.move_left,
                                self.agent1.move_right,
                                self.agent1.turn_left, self.agent1.turn_right, self.agent1.beam, self.agent1.stay]
+        #self.agent2_actions = [self.agent2.move_forward, self.agent2.move_backward, self.agent2.move_left,
+                               #self.agent2.move_right,
+                               #self.agent2.turn_left, self.agent2.turn_right, self.agent2.beam, self.agent2.stay]
+        #self.agent3_actions = [self.agent3.move_forward, self.agent3.move_backward, self.agent3.move_left,
+                               #self.agent3.move_right,
+                               #self.agent3.turn_left, self.agent3.turn_right, self.agent3.beam, self.agent3.stay]
 
 
         self.agent1_beam_set = []
+        #self.agent2_beam_set = []
+        #self.agent3_beam_set = []
 
         beam_set_list = self.agent1_beam_set
 
@@ -50,10 +58,12 @@ class GameEnv:
                         observation_rgb[:, x, y] = Colors.SCREEN_BACKGROUND
                     else:
                         observation_rgb[:, x, y] = Colors.CELL_TYPE[obs[x, y]]
-            return np.uint8(observation_rgb)
+            observation_rgb = np.ascontiguousarray(observation_rgb, dtype=np.float32) / 255
+            observation_rgb = observation_rgb.flatten()
+            return observation_rgb
 
         # get the 40 x 20 grid to be used for partial observation
-        grid_reset = np.full([20, 10], ' ', dtype=object)
+        grid_reset = np.full([self.size_x, self.size_y], ' ', dtype=object)
         for i in foodList:
             grid_reset[i[0]][i[1]] = CellType.APPLE
         for agent in agent_list:
@@ -64,6 +74,8 @@ class GameEnv:
                 grid_reset[beam[0]][beam[1]] = CellType.BEAM
 
         agent1_obs = self.agent1.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
+        #agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
+        #agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20, grid=grid_reset)
 
         return convert_observation_to_rgb(agent1_obs)
 
@@ -90,10 +102,36 @@ class GameEnv:
         if not self.agent1.is_hidden():
             agent1_action_return = self.agent1_actions[action_n[0]](env_x_size=self.size_x, env_y_size=self.size_y)
             self.agent1_beam_set = [] if action_n[0] != 6 else agent1_action_return
+        '''if not self.agent2.is_hidden():
+            agent2_action_return = self.agent2_actions[action_n[1]](env_x_size=self.size_x, env_y_size=self.size_y)
+            self.agent2_beam_set = [] if action_n[1] != 6 else agent2_action_return
+        if not self.agent3.is_hidden():
+            agent3_action_return = self.agent3_actions[action_n[2]](env_x_size=self.size_x, env_y_size=self.size_y)
+            self.agent3_beam_set = [] if action_n[2] != 6 else agent3_action_return
 
+        if not self.agent1.is_hidden() and not self.agent2.is_hidden() and \
+                ((self.agent1.x == self.agent2.x and self.agent1.y == self.agent2.y) or
+                 (self.agent1.x == agent2_old_x and self.agent1.y == agent2_old_y and
+                  self.agent2.x == agent1_old_x and self.agent2.y == agent1_old_y)):
+            self.agent1.x, self.agent1.y = agent1_old_x, agent1_old_y
+            self.agent2.x, self.agent2.y = agent2_old_x, agent2_old_y
+
+        if not self.agent1.is_hidden() and not self.agent3.is_hidden() and \
+                ((self.agent1.x == self.agent3.x and self.agent1.y == self.agent3.y) or
+                 (self.agent1.x == agent3_old_x and self.agent1.y == agent3_old_y and
+                  self.agent3.x == agent1_old_x and self.agent3.y == agent1_old_y)):
+            self.agent1.x, self.agent1.y = agent1_old_x, agent1_old_y
+            self.agent3.x, self.agent3.y = agent3_old_x, agent3_old_y
+
+        if not self.agent2.is_hidden() and not self.agent3.is_hidden() and \
+                ((self.agent2.x == self.agent3.x and self.agent2.y == self.agent3.y) or
+                 (self.agent2.x == agent3_old_x and self.agent2.y == agent3_old_y and
+                  self.agent3.x == agent2_old_x and self.agent3.y == agent2_old_y)):
+            self.agent2.x, self.agent2.y = agent2_old_x, agent2_old_y
+            self.agent3.x, self.agent3.y = agent3_old_x, agent3_old_y'''
 
         def distance(point1, point2):
-            return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+            return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
         def respawn_prob(food_around_nr, food):
             random_nr = random.uniform(0, 100)
@@ -105,6 +143,8 @@ class GameEnv:
                 food.respawn()
 
         agent1_reward = 0
+        #agent2_reward = 0
+        #agent3_reward = 0
 
         food_not_coll = foodList_1.copy()
 
@@ -135,9 +175,12 @@ class GameEnv:
             if not food.is_collected:
                 if not self.agent1.is_hidden() and food.x == self.agent1.x and food.y == self.agent1.y:
                     agent1_reward = food.eat()
+                '''elif not self.agent2.is_hidden() and food.x == self.agent2.x and food.y == self.agent2.y:
+                    agent2_reward = food.eat()
+                elif not self.agent3.is_hidden() and food.x == self.agent3.x and food.y == self.agent3.y:
+                    agent3_reward = food.eat()'''
 
-
-        beam_set_list = self.agent1_beam_set
+        beam_set_list = self.agent1_beam_set #+ self.agent2_beam_set + self.agent3_beam_set
 
         for agent in agent_list:
             if not agent.is_hidden():
@@ -152,10 +195,13 @@ class GameEnv:
                         observation_rgb[:, x, y] = Colors.SCREEN_BACKGROUND
                     else:
                         observation_rgb[:, x, y] = Colors.CELL_TYPE[obs[x, y]]
-            return np.uint8(observation_rgb)
+            observation_rgb = np.ascontiguousarray(observation_rgb, dtype=np.float32) / 255
+            #observation_rgb = observation_rgb.reshape(1, observation_rgb.shape[0],
+             #observation_rgb.shape[1], observation_rgb.shape[2])
+            observation_rgb = observation_rgb.flatten()
+            return observation_rgb
 
-
-        grid_step = np.full([20, 10], ' ', dtype=object)
+        grid_step = np.full([self.size_x, self.size_y], ' ', dtype=object)
         for i in food_not_coll:
             grid_step[i[0]][i[1]] = CellType.APPLE
         for agent in agent_list:
@@ -167,7 +213,8 @@ class GameEnv:
                 grid_step[beam[0]][beam[1]] = CellType.BEAM
 
         agent1_obs = self.agent1.partial_observation(env_x_size=20, env_y_size=10, grid=grid_step)
-
+        #agent2_obs = self.agent2.partial_observation(env_x_size=40, env_y_size=20, grid=grid_step)
+        #agent3_obs = self.agent3.partial_observation(env_x_size=40, env_y_size=20, grid=grid_step)
 
         rew_n = agent1_reward
         obs_n = convert_observation_to_rgb(agent1_obs)
@@ -182,6 +229,14 @@ class GameEnv:
             a[y + 1, x + 1, 0] = 1
             a[y + 1, x + 1, 1] = 1
             a[y + 1, x + 1, 2] = 1
+        '''for x, y in self.agent2_beam_set:
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1
+        for x, y in self.agent3_beam_set:
+            a[y + 1, x + 1, 0] = 1
+            a[y + 1, x + 1, 1] = 1
+            a[y + 1, x + 1, 2] = 1'''
 
         for food in self.food_objects:
             if not food.is_collected:
@@ -200,6 +255,10 @@ class GameEnv:
                 a[self.agent3.y + 1 + delta_y, self.agent3.x + 1 + delta_x, i] = 0.5'''
             if not self.agent1.is_hidden():
                 a[self.agent1.y + 1, self.agent1.x + 1, i] = 1 if i == self.agent1.type else 0
+            '''if not self.agent2.is_hidden():
+                a[self.agent2.y + 1, self.agent2.x + 1, i] = 1 if i == self.agent2.type else 0
+            if not self.agent3.is_hidden():
+                a[self.agent3.y + 1, self.agent3.x + 1, i] = 1 if i == self.agent3.type else 0'''
 
         return a
 
@@ -213,9 +272,9 @@ class GameEnv:
         a = np.stack([b, c, d], axis=2)
         plt.imshow(a)
         plt.show(block=False)
-        plt.pause(0.001)
+        plt.pause(0.00001)
         plt.clf()
-        return a
+        #return a
 
     def train_render(self):
         a = self.contribute_matrix()
